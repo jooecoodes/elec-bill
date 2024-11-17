@@ -67,6 +67,8 @@ def save_to_pdf():
         
         name = entry_name.get()
         file_name = f"{name.replace(' ', '_')}_electricity_bill.pdf"
+        dir = os.path.join(script_dir, "../outputs")
+        file_path = os.path.join(dir, file_name)
 
         # Create a PDF object
         pdf = FPDF()
@@ -84,7 +86,7 @@ def save_to_pdf():
             pdf.cell(0, 10, txt=line, ln=True)
 
         # Save the PDF
-        pdf.output(file_name)
+        pdf.output(file_path)
         messagebox.showinfo("Success", f"Bill saved as {file_name}")
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred while saving: {e}")
@@ -98,15 +100,18 @@ def clear_fields():
 
 
 # Create the main application window
+
 root = tk.Tk()
 root.title("Electrical Bill Profile")
 
 # This gets the absolute path of the main.py file,
 # C:\Users\<User>\OneDrive\Desktop\elec_bill\src\main.py
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # This will be equivalent to the absolute path of the logo,
 # C:\Users\<User>\OneDrive\Desktop\elec_bill\assets\logo.png
+
 icon_path = os.path.join(script_dir, "../assets/logo.png")
 
 # Load the image
