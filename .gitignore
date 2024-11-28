@@ -1,1 +1,5 @@
 venv/
+data/records/*
+!data/records/
+data/user/*
+!data/user/
