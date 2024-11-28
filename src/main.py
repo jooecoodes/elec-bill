@@ -34,30 +34,6 @@ from tkinter import messagebox
 from fpdf import FPDF
 from PIL import Image, ImageTk
 
-# Function to read user data from the CSV file
-def read_user_data():
-    try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        folder_path = os.path.join(script_dir, "../data")
-        file_path = os.path.join(folder_path, "data.csv")
-        if not os.path.isfile(file_path):
-            raise FileNotFoundError
-
-        user_data = {}
-        with open(file_path, mode="r") as file:
-            reader = csv.reader(file)
-            next(reader)
-            for row in reader:
-                unique_id, first_name, last_name, address, prev_reading, current_reading = row
-                user_data[unique_id] = {'firstName': str(first_name), 'lastName': last_name, 
-                                        'address': address, 'previous': float(prev_reading), 
-                                        'current': float(current_reading)}
-        return user_data
-    except FileNotFoundError:
-        messagebox.showerror("Error", f"File not found at {file_path}, make sure the path of the csv is correct (read_user_data)")
-    except Exception as e:
-        messagebox.showerror("Error", f"An error occured while reading the data: {e}")
-
 # Function to save user info to the CSV file
 def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
     try:
