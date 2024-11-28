@@ -1,5 +1,13 @@
+# Ignore everything inside the 'venv' directory
 venv/
+
+# Ignore all files inside 'data/records' and 'data/user' directories
 data/records/*
-!data/records/
 data/user/*
+
+# But don't ignore the 'data' directory itself
+!data/
+
+# Don't ignore the directories inside 'data' (we want to keep them in the repo)
+!data/records/
 !data/user/
