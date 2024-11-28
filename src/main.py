@@ -12,26 +12,69 @@
 #---------------------Electrical Bill----------------------------
 
 # Additional Notes:
-
 # When you cloned this from my repository, it is recommended to create a virtual environment
 # and then install all the dependencies, look for 'guide.md' file in the root dir to know how.
-
 # All the variable declaration are right below the functions. This is to ensure the readability
 # of the program. It has been always recommended to put the functions above or use function prototypes
 # to easily track the flow.
-
 # You can run the run.bat file to run this program, '.\run'
 
 # External dependencies used:
 # Tkinter
 # FPDF
+# PIL
 
+import csv
 import os
 import tkinter as tk
 from tkinter import messagebox
 from fpdf import FPDF
 from PIL import Image, ImageTk
 
+# Function to read user data from the CSV file
+def read_user_data():
+    try:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        folder_path = os.path.join(script_dir, "../data")
+        file_path = os.path.join(folder_path, "data.csv")
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError
+
+        user_data = {}
+        with open(file_path, mode="r") as file:
+            reader = csv.reader(file)
+            next(reader)
+            for row in reader:
+                name, prev_reading, current_reading = row
+                user_data[name] = {'previous': float(prev_reading), 'current': float(current_reading)}
+        return user_data
+    except FileNotFoundError:
+        messagebox.showerror("Error", f"File not found at {file_path}, make sure the path of the csv is correct (read_user_data)")
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occured while reading the data: {e}")
+
+# Function to save user info to the CSV file
+def save_user_info():
+    try:
+        name = entry_name.get()
+        data = [
+            ["Name", "Previous Read", "Current Read"],
+            ["Alice", 25, 10],
+            ["Bob", 30, 10],
+            ["Charlie", 22, 10]
+            ]
+
+        with open("data/data.csv", mode="w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerows(data)
+
+        print("Data saved to data.csv")
+    except FileNotFoundError:
+        messagebox.showerror("Error", f"File not found, make sure the csv is present inside the data folder (save_user_info)")
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occured while saving the user info: {e}")
+
+# Function to calculate the bill
 def calculate_bill():
     try:
         name = entry_name.get()
@@ -59,12 +102,16 @@ def calculate_bill():
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numbers for usage and rate.")
 
+# Function to save to pdf
 def save_to_pdf():
     try:
+        save_user_info()
+        print(read_user_data())
         if not bill_text:
             messagebox.showerror("Error", "No bill generated to save. Please calculate the bill first.")
             return
         
+        # Gets the name of the user, and then append it to the file name.
         name = entry_name.get()
         file_name = f"{name.replace(' ', '_')}_electricity_bill.pdf"
         dir = os.path.join(script_dir, "../outputs")
@@ -73,54 +120,54 @@ def save_to_pdf():
         # Create a PDF object
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("Helvetica", size=12)
 
         # Add content to the PDF
-        pdf.set_font("Arial", style="B", size=16)
-        pdf.cell(200, 10, txt="Electricity Bill", ln=True, align='C')
+        pdf.set_font("Helvetica", style="B", size=16)
+        pdf.cell(200, 10, txt="Electricity Bill", align='C')
         pdf.ln(10)
 
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("Helvetica", size=12)
         lines = bill_text.split("\n")
+        print(lines)
         for line in lines:
-            pdf.cell(0, 10, txt=line, ln=True)
+            pdf.cell(0, 10, txt=line,)
 
         # Save the PDF
         pdf.output(file_path)
         messagebox.showinfo("Success", f"Bill saved as {file_name}")
+    except FileNotFoundError:
+        messagebox.showerror("Error", f"File not found, make sure the paths are correct in the (save_to_pdf)")
     except Exception as e:
-        messagebox.showerror("Error", f"An error occurred while saving: {e}")
+        messagebox.showerror("Error", f"An error occurred while saving : {e}")
 
 def clear_fields():
-    entry_name.delete(0, tk.END)
-    entry_address.delete(0, tk.END)
-    entry_usage.delete(0, tk.END)
-    entry_rate.delete(0, tk.END)
-    label_bill.config(text="Electricity Bill\n\n[Fill out details to calculate]")
+    try:
+        entry_name.delete(0, tk.END)
+        entry_address.delete(0, tk.END)
+        entry_usage.delete(0, tk.END)
+        entry_rate.delete(0, tk.END)
+        label_bill.config(text="Electricity Bill\n\n[Fill out details to calculate]")
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occured while clearing the fields: {e}")
 
-
-# Create the main application window
-
+# Tkinter section
 root = tk.Tk()
 root.title("Electrical Bill Profile")
 
-# This gets the absolute path of the main.py file,
-# C:\Users\<User>\OneDrive\Desktop\elec_bill\src\main.py
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
-# This will be equivalent to the absolute path of the logo,
-# C:\Users\<User>\OneDrive\Desktop\elec_bill\assets\logo.png
-
-icon_path = os.path.join(script_dir, "../assets/logo.png")
-
 # Load the image
-ico = Image.open(icon_path)
-photo = ImageTk.PhotoImage(ico)
+try:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    icon_path = os.path.join(script_dir, "../assets/logo.png")
+    ico = Image.open(icon_path)
+    photo = ImageTk.PhotoImage(ico)
 
-# Set the window icon
-root.wm_iconphoto(False, photo)
-
+    # Set the window icon
+    root.wm_iconphoto(False, photo)
+except FileNotFoundError:
+    messagebox.showerror("Error", "File not found error, make sure the icon's path is correct (tkinter section)")
+except Exception as e:
+    messagebox.showerror("Error", f"An error occured while loading the image: {e}")
 
 # Customer details section
 frame_customer = tk.LabelFrame(root, text="Customer Details", padx=10, pady=10)
@@ -166,7 +213,7 @@ button_clear.grid(row=0, column=2, padx=5)
 frame_bill = tk.LabelFrame(root, text="Generated Bill", padx=10, pady=10)
 frame_bill.grid(row=3, column=0, padx=10, pady=10)
 
-bill_text = ""  # Global variable to store bill text
+bill_text = ""
 label_bill = tk.Label(frame_bill, text="Electricity Bill\n\n[Fill out details to calculate]", justify="left", font=("Courier", 12))
 label_bill.grid(row=0, column=0)
 
