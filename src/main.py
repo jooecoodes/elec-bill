@@ -119,7 +119,7 @@ def calculate_bill():
         universal_charges_rate = 0.0513
         fit_all_renewable_rate = 0.2226
 
-        rate_list = [generation_rate, transmission_rate, system_loss_rate, distribution_rate, subsidies_rate, government_tax_rate, universal_charges_rate, fit_all_renewable_rate]
+        rate_list = [round(generation_rate, 2), round(transmission_rate, 2), round(system_loss_rate, 2), round(distribution_rate, 2), round(subsidies_rate, 2), round(government_tax_rate, 2), round(universal_charges_rate, 2), round(fit_all_renewable_rate, 2)]
 
         first_name = entry_first_name.get()
         last_name = entry_last_name.get()
@@ -128,6 +128,10 @@ def calculate_bill():
 
         prev_record = float(get_last_record(first_name, last_name)['Current Reading'])
         curr_record = float(entry_usage.get())
+        
+        if curr_record < prev_record:
+            messagebox.showerror("Error", "Current record should be higher than the previous one")
+            return
         base_consumption = curr_record - prev_record
         
         print("Prev Record: ", prev_record)
@@ -137,12 +141,11 @@ def calculate_bill():
         total = 0
 
         # calculate the base consumption and add them all 
-        for i in range(0, 7):
-            base_total = base_consumption * rate_list[0]
-            total = base_total
+        for i in range(len(rate_list)):
+            total += base_consumption * rate_list[i]
+
         
         print("Sum of total rates: ", total)
-        total = base_consumption * rate
         save_user_info(first_name, last_name, address, base_consumption)
 
         if not first_name or not last_name or not address or not base_consumption or not rate:
@@ -155,7 +158,9 @@ def calculate_bill():
             f"Customer Name: {first_name} {last_name}\n"
             f"Address: {address}\n\n"
             f"Usage Details:\n"
-            f" - Usage (kWh): {base_consumption:.2f}\n"
+            f" - Current Reading (kWh): {curr_record:.2f}\n"
+            f" - Previous Reading (kWh): {prev_record:.2f}\n"
+            f" - Base Consumption (kWh): {base_consumption:.2f}\n"
             f" - Generation Rate (PHP/kWh): {generation_rate:.2f}\n"
             f" - Transmission Rate (PHP/kWh): {transmission_rate:.2f}\n"
             f" - System Loss Rate (PHP/kWh): {system_loss_rate:.2f}\n"
