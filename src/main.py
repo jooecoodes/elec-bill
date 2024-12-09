@@ -143,7 +143,7 @@ def calculate_bill():
         for i in range(len(rate_list)):
             total += base_consumption * rate_list[i]
 
-        
+
         print("Sum of total rates: ", total)
         save_user_info(first_name, last_name, address, base_consumption)
 
