@@ -29,7 +29,6 @@ import uuid
 import time
 from datetime import datetime
 from tkinter import messagebox
-# from fpdf import FPDF
 from PIL import Image, ImageTk
 import base64
 
@@ -140,7 +139,7 @@ def calculate_bill():
 
         total = 0
 
-        # calculate the base consumption and add them all 
+        # calculate the base consumption and add them all with the rates
         for i in range(len(rate_list)):
             total += base_consumption * rate_list[i]
 
@@ -213,43 +212,6 @@ def get_last_record(first_name, last_name):
 
     return latest_row
 
-# Function to save to pdf
-def save_to_pdf():
-    try:
-        if not bill_text:
-            messagebox.showerror("Error", "No bill generated to save. Please calculate the bill first.")
-            return
-        
-        # Gets the name of the user, and then append it to the file name.
-        first_name = entry_first_name.get()
-        file_name = f"{first_name.replace(' ', '_')}_electricity_bill.pdf"
-        dir = os.path.join(script_dir, "../outputs")
-        file_path = os.path.join(dir, file_name)
-
-        # Create a PDF object
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Helvetica", size=12)
-
-        # Add content to the PDF
-        pdf.set_font("Helvetica", style="B", size=16)
-        pdf.cell(200, 10, txt="Electricity Bill", align='C')
-        pdf.ln(10)
-
-        pdf.set_font("Helvetica", size=12)
-        lines = bill_text.split("\n")
-        print(lines)
-        for line in lines:
-            pdf.cell(0, 10, txt=line,)
-
-        # Save the PDF
-        pdf.output(file_path)
-        messagebox.showinfo("Success", f"Bill saved as {file_name}")
-    except FileNotFoundError:
-        messagebox.showerror("Error", f"File not found, make sure the paths are correct in the (save_to_pdf)")
-    except Exception as e:
-        messagebox.showerror("Error", f"An error occurred while saving : {e}")
-
 def clear_fields():
     try:
         entry_first_name.delete(0, tk.END)
@@ -319,11 +281,8 @@ frame_buttons.grid(row=1, column=2)
 button_calculate = tk.Button(frame_buttons, text="Generate Bill", command=calculate_bill)
 button_calculate.grid(row=0, column=0, padx=5)
 
-button_save_pdf = tk.Button(frame_buttons, text="Save to PDF", command=save_to_pdf)
-button_save_pdf.grid(row=0, column=1, padx=5)
-
 button_clear = tk.Button(frame_buttons, text="Clear", command=clear_fields)
-button_clear.grid(row=0, column=2, padx=5)
+button_clear.grid(row=0, column=1, padx=5)
 
 
 # Display bill section
