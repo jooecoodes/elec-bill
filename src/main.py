@@ -14,9 +14,7 @@
 # Additional Notes:
 # When you cloned this from my repository, it is recommended to create a virtual environment
 # and then install all the dependencies, look for 'guide.md' file in the root dir to know how.
-# All the variable declaration are right below the functions. This is to ensure the readability
-# of the program. It has been always recommended to put the functions above or use function prototypes
-# to easily track the flow.
+# All the variable declaration are right below the functions.
 # You can run the run.bat file to run this program, '.\run'
 
 # External dependencies used:
@@ -31,8 +29,9 @@ import uuid
 import time
 from datetime import datetime
 from tkinter import messagebox
-from fpdf import FPDF
+# from fpdf import FPDF
 from PIL import Image, ImageTk
+import base64
 
 # Function to save user info to the CSV file
 def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
@@ -50,7 +49,7 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
         user_id = ""
 
         try:
-            with open("data/user/data.csv", mode="r", newline="") as file:
+            with open("../data/user/data.csv", mode="r", newline="") as file:
                 reader = csv.reader(file)
                 rows = list(reader)
         except FileNotFoundError:
@@ -68,54 +67,69 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
 
         # If the user is not found, add a new entry with prev_read as 0
         if not user_found:
-            unique_id = uuid.uuid4()
+            unique_id = base64.urlsafe_b64encode((uuid.uuid4()).bytes).rstrip(b'=').decode('utf-8')
             rows.append([unique_id, first_name_stringed, last_name_stringed, 
                          address_stringed, prev_read, curr_read_float])
 
-        # Write the updated data back to the CSV file
-        with open("data/user/data.csv", mode="w", newline="") as file:
+        with open("../data/user/data.csv", mode="w", newline="") as file:
             writer = csv.writer(file)
             writer.writerows(rows)
 
         print("Data saved to data.csv")
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if not user_id:
+            rows2 = []
+            with open("../data/user/data.csv", mode="r", newline="") as file:
+                reader = csv.reader(file)
+                rows2 = list(reader)
+
+            for i, row in enumerate(rows2):
+                if row[1] == first_name_stringed and row[2] == last_name_stringed:
+                    user_id = row[0]
+                    break
 
         file_name = f"{user_id}.csv"
-        file_path = f"data/records/{file_name}"
+        file_path = f"../data/records/{file_name}"
 
-        # Check if the file already exists. If it does, append the new data. If it doesn't, create a new file.
         try:
-            # Check if the file exists (to create a header for the first time)
             with open(file_path, mode="a", newline="") as file:
+                    
                 writer = csv.writer(file)
                 
-                # If the file is empty, add the header
                 if file.tell() == 0:
                     writer.writerow(['Current Reading', 'Timestamp'])
-                
-                # Append the new record to the file
                 writer.writerow([curr_read_float, current_time])
 
             print(f"Data saved to {file_name}")
         except Exception as e:
             messagebox.showerror("Error", f"Error while creating records")
-
-    except FileNotFoundError:
-        messagebox.showerror("Error", f"File not found, make sure the csv is present inside the data folder (save_user_info)")
     except Exception as e:
         messagebox.showerror("Error", f"An error occured while saving the user info: {e}")
 
-# Function to calculate the bill
 def calculate_bill():
     try:
+        # rates 
+        generation_rate = 4.5474
+        transmission_rate = 1.2456
+        system_loss_rate = 0.8921
+        distribution_rate = 1.6393
+        subsidies_rate = 0.0200
+        government_tax_rate = 0.1250
+        universal_charges_rate = 0.0513
+        fit_all_renewable_rate = 0.2226
+
         first_name = entry_first_name.get()
         last_name = entry_last_name.get()
         address = entry_address.get()
         usage = float(entry_usage.get())
         rate = float(entry_rate.get())
-        total = usage * rate
 
+        latest_record = get_latest_record(first_name, last_name)
+        print("Latest row data:")
+        print(latest_record)
+        
+        total = usage * rate
         save_user_info(first_name, last_name, address, usage)
 
         if not first_name or not last_name or not address or not usage or not rate:
@@ -136,6 +150,46 @@ def calculate_bill():
         label_bill.config(text=bill_text)
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numbers for usage and rate.")
+
+def get_latest_record(first_name, last_name):
+    user_data_file_path = "../data/user/data.csv"
+    user_records_file_path = "../data/records"
+    target_file_name = None
+    latest_row = None
+    latest_timestamp = None
+
+     # open & read data.csv
+    if(first_name and last_name):
+        with open(user_data_file_path, mode="r") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if row["First Name"] == first_name and row["Last Name"] == last_name:
+                    print(f"First Name: {row['First Name']} Last Name: {row['Last Name']} ID: {row['ID']}")
+                    target_file_name = row['ID']
+    
+        # Loop through the directory to find the file
+        for root, dirs, files in os.walk(user_records_file_path):
+            target_file_name += ".csv"
+            if target_file_name in files:
+                file_path = os.path.join(root, target_file_name)
+                print(f"File found: {file_path}")
+                
+                # Read the CSV file and find the latest row
+                with open(file_path, mode="r") as file:
+                    reader = csv.DictReader(file)
+                    for row in reader:
+                        # Convert the timestamp to a datetime object
+                        row_timestamp = datetime.strptime(row["Timestamp"], "%Y-%m-%d %H:%M:%S")
+                        if not latest_timestamp or row_timestamp > latest_timestamp:
+                            latest_timestamp = row_timestamp
+                            latest_row = row
+                
+                break  # Stop after finding the first matching file
+
+    return latest_row
+
+    
+        
 
 # Function to save to pdf
 def save_to_pdf():
@@ -225,7 +279,7 @@ entry_address.grid(row=2, column=1)
 
 # Usage details section
 frame_usage = tk.LabelFrame(root, text="Usage Details", padx=10, pady=10)
-frame_usage.grid(row=1, column=0, padx=10, pady=5)
+frame_usage.grid(row=0, column=2, padx=10, pady=5)
 
 tk.Label(frame_usage, text="Electricity Usage (kWh):").grid(row=0, column=0, sticky="e")
 entry_usage = tk.Entry(frame_usage, width=10)
@@ -238,7 +292,7 @@ entry_rate.grid(row=1, column=1)
 
 # Buttons for actions
 frame_buttons = tk.Frame(root, padx=10, pady=10)
-frame_buttons.grid(row=2, column=0)
+frame_buttons.grid(row=1, column=2)
 
 button_calculate = tk.Button(frame_buttons, text="Generate Bill", command=calculate_bill)
 button_calculate.grid(row=0, column=0, padx=5)
@@ -252,7 +306,7 @@ button_clear.grid(row=0, column=2, padx=5)
 
 # Display bill section
 frame_bill = tk.LabelFrame(root, text="Generated Bill", padx=10, pady=10)
-frame_bill.grid(row=3, column=0, padx=10, pady=10)
+frame_bill.grid(row=3, column=0, sticky="ew", padx=10, pady=10)
 
 bill_text = ""
 label_bill = tk.Label(frame_bill, text="Electricity Bill\n\n[Fill out details to calculate]", justify="left", font=("Courier", 12))
