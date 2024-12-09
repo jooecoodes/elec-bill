@@ -119,20 +119,33 @@ def calculate_bill():
         universal_charges_rate = 0.0513
         fit_all_renewable_rate = 0.2226
 
+        rate_list = [generation_rate, transmission_rate, system_loss_rate, distribution_rate, subsidies_rate, government_tax_rate, universal_charges_rate, fit_all_renewable_rate]
+
         first_name = entry_first_name.get()
         last_name = entry_last_name.get()
         address = entry_address.get()
-        usage = float(entry_usage.get())
         rate = float(entry_rate.get())
 
-        latest_record = get_latest_record(first_name, last_name)
-        print("Latest row data:")
-        print(latest_record)
+        prev_record = float(get_last_record(first_name, last_name)['Current Reading'])
+        curr_record = float(entry_usage.get())
+        base_consumption = curr_record - prev_record
         
-        total = usage * rate
-        save_user_info(first_name, last_name, address, usage)
+        print("Prev Record: ", prev_record)
+        print("Curr Record: ", curr_record)
+        print("Base Consumption: ", base_consumption)
 
-        if not first_name or not last_name or not address or not usage or not rate:
+        total = 0
+
+        # calculate the base consumption and add them all 
+        for i in range(0, 7):
+            base_total = base_consumption * rate_list[0]
+            total = base_total
+        
+        print("Sum of total rates: ", total)
+        total = base_consumption * rate
+        save_user_info(first_name, last_name, address, base_consumption)
+
+        if not first_name or not last_name or not address or not base_consumption or not rate:
             messagebox.showerror("Input Error", "Please fill in all customer or usage details.")
             return
 
@@ -142,8 +155,15 @@ def calculate_bill():
             f"Customer Name: {first_name} {last_name}\n"
             f"Address: {address}\n\n"
             f"Usage Details:\n"
-            f" - Usage (kWh): {usage:.2f}\n"
-            f" - Rate (PHP/kWh): {rate:.2f}\n\n"
+            f" - Usage (kWh): {base_consumption:.2f}\n"
+            f" - Generation Rate (PHP/kWh): {generation_rate:.2f}\n\n"
+            f" - Transmission Rate (PHP/kWh): {transmission_rate:.2f}\n\n"
+            f" - System Loss Rate (PHP/kWh): {system_loss_rate:.2f}\n\n"
+            f" - Distribution Rate (PHP/kWh): {distribution_rate:.2f}\n\n"
+            f" - Subsidies Rate (PHP/kWh): {subsidies_rate:.2f}\n\n"
+            f" - Government Tax Rate (PHP/kWh): {government_tax_rate:.2f}\n\n"
+            f" - Universal Charges Rate (PHP/kWh): {universal_charges_rate:.2f}\n\n"
+            f" - Fit All Renewable Rate (PHP/kWh): {fit_all_renewable_rate:.2f}\n\n"
             f"Total Bill: PHP {total:.2f}\n"
             f"-----------------------------------"
         )
@@ -151,7 +171,7 @@ def calculate_bill():
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numbers for usage and rate.")
 
-def get_latest_record(first_name, last_name):
+def get_last_record(first_name, last_name):
     user_data_file_path = "../data/user/data.csv"
     user_records_file_path = "../data/records"
     target_file_name = None
@@ -187,9 +207,6 @@ def get_latest_record(first_name, last_name):
                 break  # Stop after finding the first matching file
 
     return latest_row
-
-    
-        
 
 # Function to save to pdf
 def save_to_pdf():
