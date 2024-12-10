@@ -11,20 +11,15 @@
 #----------------------------------------------------------------
 #---------------------Electrical Bill----------------------------
 
+# Overview: 
+# This program takes the base consumption by taking the current records of your electricity bill
+# and subtracting it to the previous record (if you have already set the record otherwise it is set 
+# to 0 by default) and then calculates the total bill to be payed by multiplying the base consumption with the predetermined rates (generation, transmission, system loss, etc.). The program stores all data inside 2 .csv files, one is for the general information of the user, and the
+# other one is for their records (which will be named after their ID).
+
 # Additional Notes:
-# When you cloned this from my repository, it is recommended to create a virtual environment
-# and then install all the dependencies, look for 'guide.md' file in the root dir to know how.
 # All the variable declaration are right below the functions.
 # You can run the run.bat file to run this program, '.\run'
-
-# Overview: 
-#  This program takes the current records of your electricity bill and compare it to the previous record if you have already set the record.
-#  It does this automatically by taking the first name and the last name and searches it into .csv files.
-
-# External dependencies used:
-# Tkinter
-# FPDF
-# PIL
 
 import csv
 import os
@@ -36,17 +31,14 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import base64
 
-# Function to save user info to the CSV file
+# save user info
 def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
     try:
-        # Convert inputs to proper types
         first_name_stringed = str(first_name)
         last_name_stringed = str(last_name)
         address_stringed = str(address)
         curr_read_float = float(curr_read)
 
-
-        # Read existing data from the CSV file
         rows = []
         user_found = False
         user_id = ""
@@ -135,7 +127,7 @@ def calculate_bill():
             prev_record = float(get_last_record(first_name, last_name)['Current Reading'])
             
         if curr_record <= prev_record:
-            messagebox.showerror("Error", "Current record should be higher than the previous one")
+            messagebox.showerror("Error", "Current record should be higher and doesn't equal to the previous one")
             return
         
         # gets the base consumption
