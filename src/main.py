@@ -223,6 +223,7 @@ def clear_fields():
     except Exception as e:
         messagebox.showerror("Error", f"An error occured while clearing the fields: {e}")
 
+# ui part
 # Tkinter section
 root = tk.Tk()
 root.title("Electrical Bill Profile")
@@ -265,7 +266,7 @@ entry_address.grid(row=2, column=1)
 frame_usage = tk.LabelFrame(root, text="Usage Details", padx=10, pady=10)
 frame_usage.grid(row=0, column=2, padx=10, pady=5)
 
-tk.Label(frame_usage, text="Electricity Usage (kWh):").grid(row=0, column=0, sticky="e")
+tk.Label(frame_usage, text="Current Usage (kWh):").grid(row=0, column=0, sticky="e")
 entry_usage = tk.Entry(frame_usage, width=10)
 entry_usage.grid(row=0, column=1)
 
