@@ -117,37 +117,40 @@ def calculate_bill():
         government_tax_rate = 0.1250
         universal_charges_rate = 0.0513
         fit_all_renewable_rate = 0.2226
+        total = 0
+        prev_record = 0
+        curr_record = float(entry_usage.get())
 
         rate_list = [round(generation_rate, 2), round(transmission_rate, 2), round(system_loss_rate, 2), round(distribution_rate, 2), round(subsidies_rate, 2), round(government_tax_rate, 2), round(universal_charges_rate, 2), round(fit_all_renewable_rate, 2)]
 
         first_name = entry_first_name.get()
         last_name = entry_last_name.get()
         address = entry_address.get()
-        rate = float(entry_rate.get())
 
-        prev_record = float(get_last_record(first_name, last_name)['Current Reading'])
-        curr_record = float(entry_usage.get())
-        
-        if curr_record < prev_record:
+        if user_exist(first_name, last_name):    
+            prev_record = float(get_last_record(first_name, last_name)['Current Reading'])
+            
+        if curr_record <= prev_record:
             messagebox.showerror("Error", "Current record should be higher than the previous one")
             return
-        base_consumption = curr_record - prev_record
         
+        # gets the base consumption
+        base_consumption = curr_record - prev_record
+
         print("Prev Record: ", prev_record)
         print("Curr Record: ", curr_record)
         print("Base Consumption: ", base_consumption)
-
-        total = 0
 
         # calculate the base consumption and add them all with the rates
         for i in range(len(rate_list)):
             total += base_consumption * rate_list[i]
 
-
         print("Sum of total rates: ", total)
-        save_user_info(first_name, last_name, address, base_consumption)
 
-        if not first_name or not last_name or not address or not base_consumption or not rate:
+        save_user_info(first_name, last_name, address, curr_record)
+        print("Im executed")
+
+        if not first_name or not last_name or not address or not base_consumption:
             messagebox.showerror("Input Error", "Please fill in all customer or usage details.")
             return
 
@@ -175,6 +178,18 @@ def calculate_bill():
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numbers for usage and rate.")
 
+def user_exist(first_name, last_name):
+    user_data_file_path = "../data/user/data.csv"
+    if(first_name and last_name):
+        with open(user_data_file_path, mode="r") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if row["First Name"] == first_name and row["Last Name"] == last_name:
+                    print(f"First Name: {row['First Name']} Last Name: {row['Last Name']} ID: {row['ID']}")
+                    return True    
+    return False
+
+
 def get_last_record(first_name, last_name):
     user_data_file_path = "../data/user/data.csv"
     user_records_file_path = "../data/records"
@@ -191,24 +206,24 @@ def get_last_record(first_name, last_name):
                     print(f"First Name: {row['First Name']} Last Name: {row['Last Name']} ID: {row['ID']}")
                     target_file_name = row['ID']
     
-        # Loop through the directory to find the file
+        # loop through dir 
         for root, dirs, files in os.walk(user_records_file_path):
             target_file_name += ".csv"
             if target_file_name in files:
                 file_path = os.path.join(root, target_file_name)
                 print(f"File found: {file_path}")
                 
-                # Read the CSV file and find the latest row
+                # read .csv find latest row
                 with open(file_path, mode="r") as file:
                     reader = csv.DictReader(file)
                     for row in reader:
-                        # Convert the timestamp to a datetime object
+                        # timestamp to datetime obj
                         row_timestamp = datetime.strptime(row["Timestamp"], "%Y-%m-%d %H:%M:%S")
                         if not latest_timestamp or row_timestamp > latest_timestamp:
                             latest_timestamp = row_timestamp
                             latest_row = row
                 
-                break  # Stop after finding the first matching file
+                break  # stops when found
 
     return latest_row
 
@@ -218,51 +233,44 @@ def clear_fields():
         entry_last_name.delete(0, tk.END)
         entry_address.delete(0, tk.END)
         entry_usage.delete(0, tk.END)
-        entry_rate.delete(0, tk.END)
         label_bill.config(text="Electricity Bill\n\n[Fill out details to calculate]")
     except Exception as e:
         messagebox.showerror("Error", f"An error occured while clearing the fields: {e}")
 
 # ui part
-# Tkinter section
 root = tk.Tk()
 root.title("Electrical Bill Profile")
 
-# Load the image
+# load logo
 try:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     icon_path = os.path.join(script_dir, "../assets/logo.png")
     ico = Image.open(icon_path)
     photo = ImageTk.PhotoImage(ico)
 
-    # Set the window icon
+    # set icon
     root.wm_iconphoto(False, photo)
 except FileNotFoundError:
     messagebox.showerror("Error", "File not found error, make sure the icon's path is correct (tkinter section)")
 except Exception as e:
     messagebox.showerror("Error", f"An error occured while loading the image: {e}")
 
-# Customer details section
 frame_customer = tk.LabelFrame(root, text="Customer Details", padx=10, pady=10)
 frame_customer.grid(row=0, column=0, padx=10, pady=5)
 
-# First Name
+
 tk.Label(frame_customer, text="First Name:").grid(row=0, column=0, sticky="e")
-entry_first_name = tk.Entry(frame_customer, width=30)  # Changed variable name for clarity
+entry_first_name = tk.Entry(frame_customer, width=30)  
 entry_first_name.grid(row=0, column=1)
 
-# Last Name
-tk.Label(frame_customer, text="Last Name:").grid(row=1, column=0, sticky="e")  # Adjusted row
-entry_last_name = tk.Entry(frame_customer, width=30)  # Changed variable name for clarity
+tk.Label(frame_customer, text="Last Name:").grid(row=1, column=0, sticky="e")
+entry_last_name = tk.Entry(frame_customer, width=30)  
 entry_last_name.grid(row=1, column=1)
 
-# Address
-tk.Label(frame_customer, text="Address:").grid(row=2, column=0, sticky="e")  # Adjusted row
+tk.Label(frame_customer, text="Address:").grid(row=2, column=0, sticky="e")
 entry_address = tk.Entry(frame_customer, width=30)
 entry_address.grid(row=2, column=1)
 
-
-# Usage details section
 frame_usage = tk.LabelFrame(root, text="Usage Details", padx=10, pady=10)
 frame_usage.grid(row=0, column=2, padx=10, pady=5)
 
@@ -270,12 +278,7 @@ tk.Label(frame_usage, text="Current Usage (kWh):").grid(row=0, column=0, sticky=
 entry_usage = tk.Entry(frame_usage, width=10)
 entry_usage.grid(row=0, column=1)
 
-tk.Label(frame_usage, text="Rate per kWh (PHP):").grid(row=1, column=0, sticky="e")
-entry_rate = tk.Entry(frame_usage, width=10)
-entry_rate.grid(row=1, column=1)
-
-
-# Buttons for actions
+# buttons for action
 frame_buttons = tk.Frame(root, padx=10, pady=10)
 frame_buttons.grid(row=1, column=2)
 
@@ -286,7 +289,7 @@ button_clear = tk.Button(frame_buttons, text="Clear", command=clear_fields)
 button_clear.grid(row=0, column=1, padx=5)
 
 
-# Display bill section
+# display bill
 frame_bill = tk.LabelFrame(root, text="Generated Bill", padx=10, pady=10)
 frame_bill.grid(row=3, column=0, sticky="ew", padx=10, pady=10)
 
@@ -295,5 +298,5 @@ label_bill = tk.Label(frame_bill, text="Electricity Bill\n\n[Fill out details to
 label_bill.grid(row=0, column=0)
 
 
-# Start the main loop
+# start loop
 root.mainloop()
