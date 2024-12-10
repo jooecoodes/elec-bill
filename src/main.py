@@ -17,6 +17,10 @@
 # All the variable declaration are right below the functions.
 # You can run the run.bat file to run this program, '.\run'
 
+# Overview: 
+#  This program takes the current records of your electricity bill and compare it to the previous record if you have already set the record.
+#  It does this automatically by taking the first name and the last name and searches it into .csv files.
+
 # External dependencies used:
 # Tkinter
 # FPDF
@@ -287,7 +291,6 @@ button_calculate.grid(row=0, column=0, padx=5)
 
 button_clear = tk.Button(frame_buttons, text="Clear", command=clear_fields)
 button_clear.grid(row=0, column=1, padx=5)
-
 
 # display bill
 frame_bill = tk.LabelFrame(root, text="Generated Bill", padx=10, pady=10)
