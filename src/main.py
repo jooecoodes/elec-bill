@@ -48,9 +48,9 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
                 reader = csv.reader(file)
                 rows = list(reader)
         except FileNotFoundError:
-            pass  # No file, will create a new one
+            pass 
 
-        # Look for the existing user to get their previous reading
+        # look for prev read
         for i, row in enumerate(rows):
             if row[1] == first_name_stringed and row[2] == last_name_stringed:
                 prev_read = float(row[5])  # Correct index for the previous reading
@@ -60,7 +60,7 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
                 user_id = row[0]
                 break
 
-        # If the user is not found, add a new entry with prev_read as 0
+        # if not found add entry w/ prev 0
         if not user_found:
             unique_id = base64.urlsafe_b64encode((uuid.uuid4()).bytes).rstrip(b'=').decode('utf-8')
             rows.append([unique_id, first_name_stringed, last_name_stringed, 
