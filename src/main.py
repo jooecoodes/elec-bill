@@ -44,7 +44,7 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
         user_id = ""
 
         try:
-            with open("../data/user/data.csv", mode="r", newline="") as file:
+            with open(user_data_file_path, mode="r", newline="") as file:
                 reader = csv.reader(file)
                 rows = list(reader)
         except FileNotFoundError:
@@ -66,7 +66,7 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
             rows.append([unique_id, first_name_stringed, last_name_stringed, 
                          address_stringed, prev_read, curr_read_float])
 
-        with open("../data/user/data.csv", mode="w", newline="") as file:
+        with open(user_data_file_path, mode="w", newline="") as file:
             writer = csv.writer(file)
             writer.writerows(rows)
 
@@ -75,7 +75,7 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if not user_id:
             rows2 = []
-            with open("../data/user/data.csv", mode="r", newline="") as file:
+            with open(user_data_file_path, mode="r", newline="") as file:
                 reader = csv.reader(file)
                 rows2 = list(reader)
 
@@ -85,7 +85,7 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
                     break
 
         file_name = f"{user_id}.csv"
-        file_path = f"../data/records/{file_name}"
+        file_path = os.path.join(script_dir, f"../data/records/{file_name}")
 
         try:
             with open(file_path, mode="a", newline="") as file:
@@ -175,7 +175,6 @@ def calculate_bill():
         messagebox.showerror("Input Error", "Please enter valid numbers for usage and rate.")
 
 def user_exist(first_name, last_name):
-    user_data_file_path = "../data/user/data.csv"
     if(first_name and last_name):
         with open(user_data_file_path, mode="r") as file:
             reader = csv.DictReader(file)
@@ -187,8 +186,7 @@ def user_exist(first_name, last_name):
 
 
 def get_last_record(first_name, last_name):
-    user_data_file_path = "../data/user/data.csv"
-    user_records_file_path = "../data/records"
+    user_records_file_path = os.path.join(script_dir, "../data/records")
     target_file_name = None
     latest_row = None
     latest_timestamp = None
@@ -233,13 +231,16 @@ def clear_fields():
     except Exception as e:
         messagebox.showerror("Error", f"An error occured while clearing the fields: {e}")
 
+# abs path
+script_dir = os.path.dirname(os.path.abspath(__file__))
+user_data_file_path = os.path.join(script_dir, "../data/user/data.csv")
+
 # ui part
 root = tk.Tk()
 root.title("Electrical Bill Profile")
 
 # load logo
 try:
-    script_dir = os.path.dirname(os.path.abspath(__file__))
     icon_path = os.path.join(script_dir, "../assets/logo.png")
     ico = Image.open(icon_path)
     photo = ImageTk.PhotoImage(ico)
