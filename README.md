@@ -1,6 +1,6 @@
 This is our final PIT for the first semester.
 
-#### Members:
+### Members:
 <ol>
   <li>Villacorta</li>
   <li>Ello</li>
