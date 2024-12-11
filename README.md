@@ -18,3 +18,5 @@ This is our final PIT for the first semester.
   to 0 by default) and then calculates the total bill to be payed by multiplying the base consumption with the predetermined rates (generation, transmission, system loss, etc.). The program stores all data inside 2 .csv files, one is for the general information of the user, and the
   other one is for their records (which will be named after their ID).
 </p>
+
+![menu](https://github.com/jooecoodes/elec-bill/blob/master/assets/showcase.png?raw=true)
