@@ -104,20 +104,41 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
 
 def calculate_bill():
     try:
-        # rates 
-        generation_rate = 4.5474
-        transmission_rate = 1.2456
-        system_loss_rate = 0.8921
-        distribution_rate = 1.6393
-        subsidies_rate = 0.0200
-        government_tax_rate = 0.1250
-        universal_charges_rate = 0.0513
-        fit_all_renewable_rate = 0.2226
+        # residential rates 
+        residential_generation_rate = 4.5474
+        residential_transmission_rate = 1.2456
+        residential_system_loss_rate = 0.8921
+        residential_distribution_rate = 1.6393
+        residential_subsidies_rate = 0.0200
+        residential_government_tax_rate = 0.1250
+        residential_universal_charges_rate = 0.0513
+        residential_fit_all_renewable_rate = 0.2226
+
+        # commercial rates 
+        commercial_generation_rate = 3.6273
+        commercial_transmission_rate = 1.1423
+        commercial_system_loss_rate = 0.5621
+        commercial_distribution_rate = 1.3426
+        commercial_subsidies_rate = 0.0145
+        commercial_government_tax_rate = 0.1250
+        commercial_universal_charges_rate = 0.0426
+        commercial_fit_all_renewable_rate = 0.1682
+
+        # vars
         total = 0
         prev_record = 0
         curr_record = float(entry_usage.get())
+        customer_type = ""
+        threshold = 2000
+        residential_base_consumption = 0
+        commercial_base_consumption = 0
+        total_residential = 0
+        total_commercial = 0
 
-        rate_list = [round(generation_rate, 2), round(transmission_rate, 2), round(system_loss_rate, 2), round(distribution_rate, 2), round(subsidies_rate, 2), round(government_tax_rate, 2), round(universal_charges_rate, 2), round(fit_all_renewable_rate, 2)]
+        # rate lists
+        residential_rate_list = [round(residential_generation_rate, 2), round(residential_transmission_rate, 2), round(residential_system_loss_rate, 2), round(residential_distribution_rate, 2), round(residential_subsidies_rate, 2), round(residential_government_tax_rate, 2), round(residential_universal_charges_rate, 2), round(residential_fit_all_renewable_rate, 2)]
+
+        commercial_rate_list = [round(commercial_generation_rate, 2), round(commercial_transmission_rate, 2), round(commercial_system_loss_rate, 2), round(commercial_distribution_rate, 2), round(commercial_subsidies_rate, 2), round(commercial_government_tax_rate, 2), round(commercial_universal_charges_rate, 2), round(commercial_fit_all_renewable_rate, 2)]
 
         first_name = entry_first_name.get()
         last_name = entry_last_name.get()
@@ -133,15 +154,42 @@ def calculate_bill():
         # gets the base consumption
         base_consumption = curr_record - prev_record
 
+        # takes the residential and commercial 
+        if base_consumption > threshold:
+            print("executed comm")
+            commercial_base_consumption = base_consumption - threshold
+            residential_base_consumption = threshold
+     
+            # calculate base consumption to residential rates
+            for i in range(len(residential_rate_list)):
+                total_residential += base_consumption * residential_rate_list[i]
+            
+            # calculate base consumption to commercial rates
+            for i in range(len(commercial_rate_list)):
+                total_commercial += base_consumption * commercial_rate_list[i]
+            
+            total = total_commercial + total_residential
+        else:
+            print("executed res")
+            residential_base_consumption = base_consumption
+            # calculate base consumption to residential rates
+            for i in range(len(residential_rate_list)):
+                total_residential += residential_base_consumption * residential_rate_list[i]
+            
+            total = total_residential
+
+        
         print("Prev Record: ", prev_record)
         print("Curr Record: ", curr_record)
         print("Base Consumption: ", base_consumption)
 
-        # calculate the base consumption and add them all with the rates
-        for i in range(len(rate_list)):
-            total += base_consumption * rate_list[i]
-
         print("Sum of total rates: ", total)
+
+        # residential rate
+        # residential_rate = total_residential / threshold
+        # commercial_rate = total_commercial / (base_consumption - threshold)
+
+        print("Residential")
 
         save_user_info(first_name, last_name, address, curr_record)
         print("Im executed")
@@ -152,23 +200,31 @@ def calculate_bill():
 
         global bill_text
         bill_text = (
-            f"Electricity Bill\n\n"
-            f"Customer Name: {first_name} {last_name}\n"
-            f"Address: {address}\n\n"
-            f"Usage Details:\n"
-            f" - Current Reading (kWh): {curr_record:.2f}\n"
-            f" - Previous Reading (kWh): {prev_record:.2f}\n"
-            f" - Base Consumption (kWh): {base_consumption:.2f}\n"
-            f" - Generation Rate (PHP/kWh): {generation_rate:.2f}\n"
-            f" - Transmission Rate (PHP/kWh): {transmission_rate:.2f}\n"
-            f" - System Loss Rate (PHP/kWh): {system_loss_rate:.2f}\n"
-            f" - Distribution Rate (PHP/kWh): {distribution_rate:.2f}\n"
-            f" - Subsidies Rate (PHP/kWh): {subsidies_rate:.2f}\n"
-            f" - Government Tax Rate (PHP/kWh): {government_tax_rate:.2f}\n"
-            f" - Universal Charges Rate (PHP/kWh): {universal_charges_rate:.2f}\n"
-            f" - Fit All Renewable Rate (PHP/kWh): {fit_all_renewable_rate:.2f}\n"
-            f"Total Bill: PHP {total:.2f}\n"
-            f"-----------------------------------"
+                f"Electricity Bill\n\n"
+                f"{'-'*60}\n"
+                f"Customer Name: {first_name} {last_name}\n"
+                f"Address: {address}\n"
+                f"Usage Details:\n"
+                f"{'-'*60}\n"
+                f"Current Record (kWh):{curr_record} \n"
+                f"Previous Record (kWh):{prev_record} \n"
+                f"Base Consumption (kWh):{base_consumption} \n"
+                f"Residential Base Consumption (kWh):{residential_base_consumption} \n"
+                f"Commercial Base Consumption (kWh): {commercial_base_consumption} \n"
+                f"{'-'*60}\n"
+                f"{'':<34}{'Residential':<15}{'Commercial':<15}\n"
+                f"{'-'*60}\n"
+                f"Generation Rate (PHP/kWh):{'':<11}{residential_generation_rate:<15.2f}{commercial_generation_rate:<15.2f}\n"
+                f"Transmission Rate (PHP/kWh):{'':<9}{residential_transmission_rate:<15.2f}{commercial_transmission_rate:<15.2f}\n"
+                f"System Loss Rate (PHP/kWh):{'':<10}{residential_system_loss_rate:<15.2f}{commercial_system_loss_rate:<15.2f}\n"
+                f"Distribution Rate (PHP/kWh):{'':<9}{residential_distribution_rate:<15.2f}{commercial_distribution_rate:<15.2f}\n"
+                f"Subsidies Rate (PHP/kWh):{'':<12}{residential_subsidies_rate:<15.2f}{commercial_subsidies_rate:<15.2f}\n"
+                f"Government Tax Rate (PHP/kWh):{'':<7}{residential_government_tax_rate:<15.2f}{commercial_government_tax_rate:<15.2f}\n"
+                f"Universal Charges Rate (PHP/kWh):{'':<4}{residential_universal_charges_rate:<15.2f}{commercial_universal_charges_rate:<15.2f}\n"
+                f"Fit All Renewable Rate (PHP/kWh):{'':<4}{residential_fit_all_renewable_rate:<15.2f}{commercial_fit_all_renewable_rate:<15.2f}\n\n"
+                f"{'-'*60}\n"
+                f"Total Bill: PHP {total:.2f}\n"
+                f"{'-'*60}\n"
         )
         label_bill.config(text=bill_text)
     except ValueError:
