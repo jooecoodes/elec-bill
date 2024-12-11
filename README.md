@@ -1,4 +1,4 @@
-This is our final PIT for the first semester in CS111 Computer Programming 1
+This is our final PIT for the first semester in CS112 Computer Programming 1
 
 ### Members
 <ol>
