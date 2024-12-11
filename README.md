@@ -1,6 +1,6 @@
 This is our final PIT for the first semester in CS111 Computer Programming 1
 
-### Members:
+### Members
 <ol>
   <li>Villacorta</li>
   <li>Ello</li>
@@ -17,7 +17,7 @@ You can run the run.bat file to run the program immediately through the terminal
 .\run
 ```
 
-### Functionality:
+### Functionality
 <p>
   This program takes the total bill by taking the current records of your electricity bill
 and subtracting it to the previous record to get the base consumption (if you have already set the record otherwise it is set 
@@ -26,5 +26,5 @@ to 0 by default) and then calculates the total bill to be payed by multiplying t
 
 ![menu](https://github.com/jooecoodes/elec-bill/blob/master/assets/showcase.png?raw=true)
 
-### Improvements:
+### Improvements
 There's so much room for improvements in this program including the code itself and make it more efficient and concise. It's not that bad but it's definitely not that well-written resourcefully.
