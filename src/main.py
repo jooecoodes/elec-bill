@@ -222,9 +222,9 @@ def calculate_bill():
                 f"Universal Charges Rate (PHP/kWh):{'':<4}{residential_universal_charges_rate:<15.2f}{commercial_universal_charges_rate:<5.2f}\n"
                 f"Fit All Renewable Rate (PHP/kWh):{'':<4}{residential_fit_all_renewable_rate:<15.2f}{commercial_fit_all_renewable_rate:<5.2f}\n\n"
                 f"{'-'*60}\n"
-                f"Residential Bill PHP {total_residential:.2f}\n"
-                f"Commercial Bill PHP {total_commercial:.2f}\n"
-                f"Total Bill: PHP {total:.2f}\n"
+                f"Residential Bill (PHP) {total_residential:.2f}\n"
+                f"Commercial Bill (PHP) {total_commercial:.2f}\n"
+                f"Total Bill: (PHP) {total:.2f}\n"
                 f"{'-'*60}\n"
         )
         label_bill.config(
