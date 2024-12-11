@@ -201,32 +201,35 @@ def calculate_bill():
         global bill_text
         bill_text = (
                 f"Electricity Bill\n\n"
-                f"{'-'*60}\n"
-                f"Customer Name: {first_name} {last_name}\n"
-                f"Address: {address}\n"
+                f"Customer Details:\n"
+                f" Customer Name: {first_name} {last_name}\n"
+                f" Address: {address}\n"
                 f"Usage Details:\n"
-                f"{'-'*60}\n"
-                f"Current Record (kWh):{curr_record} \n"
-                f"Previous Record (kWh):{prev_record} \n"
-                f"Base Consumption (kWh):{base_consumption} \n"
-                f"Residential Base Consumption (kWh):{residential_base_consumption} \n"
-                f"Commercial Base Consumption (kWh): {commercial_base_consumption} \n"
+                f" Current Record (kWh):{curr_record} \n"
+                f" Previous Record (kWh):{prev_record} \n"
+                f" Base Consumption (kWh):{base_consumption} \n"
+                f" Residential Base Consumption (kWh):{residential_base_consumption} \n"
+                f" Commercial Base Consumption (kWh): {commercial_base_consumption} \n"
                 f"{'-'*60}\n"
                 f"{'':<34}{'Residential':<15}{'Commercial':<15}\n"
                 f"{'-'*60}\n"
-                f"Generation Rate (PHP/kWh):{'':<11}{residential_generation_rate:<15.2f}{commercial_generation_rate:<15.2f}\n"
-                f"Transmission Rate (PHP/kWh):{'':<9}{residential_transmission_rate:<15.2f}{commercial_transmission_rate:<15.2f}\n"
-                f"System Loss Rate (PHP/kWh):{'':<10}{residential_system_loss_rate:<15.2f}{commercial_system_loss_rate:<15.2f}\n"
-                f"Distribution Rate (PHP/kWh):{'':<9}{residential_distribution_rate:<15.2f}{commercial_distribution_rate:<15.2f}\n"
-                f"Subsidies Rate (PHP/kWh):{'':<12}{residential_subsidies_rate:<15.2f}{commercial_subsidies_rate:<15.2f}\n"
-                f"Government Tax Rate (PHP/kWh):{'':<7}{residential_government_tax_rate:<15.2f}{commercial_government_tax_rate:<15.2f}\n"
-                f"Universal Charges Rate (PHP/kWh):{'':<4}{residential_universal_charges_rate:<15.2f}{commercial_universal_charges_rate:<15.2f}\n"
-                f"Fit All Renewable Rate (PHP/kWh):{'':<4}{residential_fit_all_renewable_rate:<15.2f}{commercial_fit_all_renewable_rate:<15.2f}\n\n"
+                f"Generation Rate (PHP/kWh):{'':<11}{residential_generation_rate:<15.2f}{commercial_generation_rate:<5.2f}\n"
+                f"Transmission Rate (PHP/kWh):{'':<9}{residential_transmission_rate:<15.2f}{commercial_transmission_rate:<5.2f}\n"
+                f"System Loss Rate (PHP/kWh):{'':<10}{residential_system_loss_rate:<15.2f}{commercial_system_loss_rate:<5.2f}\n"
+                f"Distribution Rate (PHP/kWh):{'':<9}{residential_distribution_rate:<15.2f}{commercial_distribution_rate:<5.2f}\n"
+                f"Subsidies Rate (PHP/kWh):{'':<12}{residential_subsidies_rate:<15.2f}{commercial_subsidies_rate:<5.2f}\n"
+                f"Government Tax Rate (PHP/kWh):{'':<7}{residential_government_tax_rate:<15.2f}{commercial_government_tax_rate:<5.2f}\n"
+                f"Universal Charges Rate (PHP/kWh):{'':<4}{residential_universal_charges_rate:<15.2f}{commercial_universal_charges_rate:<5.2f}\n"
+                f"Fit All Renewable Rate (PHP/kWh):{'':<4}{residential_fit_all_renewable_rate:<15.2f}{commercial_fit_all_renewable_rate:<5.2f}\n\n"
                 f"{'-'*60}\n"
+                f"Residential Bill PHP {total_residential:.2f}\n"
+                f"Commercial Bill PHP {total_commercial:.2f}\n"
                 f"Total Bill: PHP {total:.2f}\n"
                 f"{'-'*60}\n"
         )
-        label_bill.config(text=bill_text)
+        label_bill.config(
+            text=bill_text,
+        )
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numbers for usage and rate.")
 
@@ -295,6 +298,11 @@ user_data_file_path = os.path.join(script_dir, "../data/user/data.csv")
 root = tk.Tk()
 root.title("Electrical Bill Profile")
 
+# conf. column weights allow flex. resizing
+root.grid_columnconfigure(0, weight=1)  
+root.grid_columnconfigure(1, weight=1) 
+root.grid_columnconfigure(2, weight=1)  
+
 # load logo
 try:
     icon_path = os.path.join(script_dir, "../assets/logo.png")
@@ -343,11 +351,11 @@ button_clear.grid(row=0, column=1, padx=5)
 
 # display bill
 frame_bill = tk.LabelFrame(root, text="Generated Bill", padx=10, pady=10)
-frame_bill.grid(row=3, column=0, sticky="ew", padx=10, pady=10)
+frame_bill.grid(row=3, column=0, columnspan=3, sticky="ew", padx=10, pady=10)  # spans 3 col.
 
 bill_text = ""
-label_bill = tk.Label(frame_bill, text="Electricity Bill\n\n[Fill out details to calculate]", justify="left", font=("Courier", 12))
-label_bill.grid(row=0, column=0)
+label_bill = tk.Label(frame_bill, text="Electricity Bill\n\n[Fill out details to calculate]", justify="left", font=("Courier", 12), anchor="w")
+label_bill.grid(row=0, column=0, sticky="w")
 
 
 # start loop
