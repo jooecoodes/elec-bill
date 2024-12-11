@@ -105,24 +105,24 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
 def calculate_bill():
     try:
         # residential rates 
-        residential_generation_rate = 4.5474
-        residential_transmission_rate = 1.2456
-        residential_system_loss_rate = 0.8921
-        residential_distribution_rate = 1.6393
-        residential_subsidies_rate = 0.0200
+        residential_generation_rate = 3.6273
+        residential_transmission_rate = 1.1423
+        residential_system_loss_rate = 0.5621
+        residential_distribution_rate = 1.3426
+        residential_subsidies_rate = 0.0145
         residential_government_tax_rate = 0.1250
-        residential_universal_charges_rate = 0.0513
-        residential_fit_all_renewable_rate = 0.2226
+        residential_universal_charges_rate = 0.0426
+        residential_fit_all_renewable_rate = 0.1682
 
         # commercial rates 
-        commercial_generation_rate = 3.6273
-        commercial_transmission_rate = 1.1423
-        commercial_system_loss_rate = 0.5621
-        commercial_distribution_rate = 1.3426
-        commercial_subsidies_rate = 0.0145
+        commercial_generation_rate = 4.5474
+        commercial_transmission_rate = 1.2456
+        commercial_system_loss_rate = 0.8921
+        commercial_distribution_rate = 1.6393
+        commercial_subsidies_rate = 0.0200
         commercial_government_tax_rate = 0.1250
-        commercial_universal_charges_rate = 0.0426
-        commercial_fit_all_renewable_rate = 0.1682
+        commercial_universal_charges_rate = 0.0513
+        commercial_fit_all_renewable_rate = 0.2226
 
         # vars
         total = 0
@@ -177,7 +177,6 @@ def calculate_bill():
                 total_residential += residential_base_consumption * residential_rate_list[i]
             
             total = total_residential
-
         
         print("Prev Record: ", prev_record)
         print("Curr Record: ", curr_record)
@@ -220,7 +219,7 @@ def calculate_bill():
                 f"Subsidies Rate (PHP/kWh):{'':<12}{residential_subsidies_rate:<15.2f}{commercial_subsidies_rate:<5.2f}\n"
                 f"Government Tax Rate (PHP/kWh):{'':<7}{residential_government_tax_rate:<15.2f}{commercial_government_tax_rate:<5.2f}\n"
                 f"Universal Charges Rate (PHP/kWh):{'':<4}{residential_universal_charges_rate:<15.2f}{commercial_universal_charges_rate:<5.2f}\n"
-                f"Fit All Renewable Rate (PHP/kWh):{'':<4}{residential_fit_all_renewable_rate:<15.2f}{commercial_fit_all_renewable_rate:<5.2f}\n\n"
+                f"Fit All Renewable Rate (PHP/kWh):{'':<4}{residential_fit_all_renewable_rate:<15.2f}{commercial_fit_all_renewable_rate:<5.2f}\n"
                 f"{'-'*60}\n"
                 f"Residential Bill (PHP) {total_residential:.2f}\n"
                 f"Commercial Bill (PHP) {total_commercial:.2f}\n"
