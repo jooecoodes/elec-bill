@@ -1,3 +1,4 @@
 venv/
 data/records/*
 !data/records/.gitkeep
+data/user/data.csv
