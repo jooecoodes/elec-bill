@@ -12,7 +12,7 @@ This is our final PIT for the first semester in CS112 Computer Programming 1
 </ol>
 
 ### Initialization
-You can run the run.bat file to run the program immediately through the terminal
+You can run the run.bat file to run the program immediately through the terminal in the root directory
 ```shell
 .\run
 ```
