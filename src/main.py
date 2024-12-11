@@ -12,10 +12,9 @@
 #---------------------Electrical Bill----------------------------
 
 # Overview: 
-# This program takes the base consumption by taking the current records of your electricity bill
-# and subtracting it to the previous record (if you have already set the record otherwise it is set 
-# to 0 by default) and then calculates the total bill to be payed by multiplying the base consumption with the predetermined rates (generation, transmission, system loss, etc.). The program stores all data inside 2 .csv files, one is for the general information of the user, and the
-# other one is for their records (which will be named after their ID).
+# This program takes the total bill by taking the current records of your electricity bill
+# and subtracting it to the previous record to get the base consumption (if you have already set the record otherwise it is set 
+# to 0 by default) and then calculates the total bill to be payed by multiplying the base consumption with the predetermined rates (generation, transmission, system loss, etc.). If the base consumption goes over the threshold for a residential base consumption (e.g. in this case 1500), the exceeded amount will be taken and calculated with the commercial rate and then added to the residential base consumption calculated with the residential rate to get total amount of the bill. The program stores all data inside 2 .csv files, one is for the general information of the user, and the other one is for their records (which will be named after their IDs). If the first name and the last name matches some data stored during input, it will automatically retrieve the data such as their previous reading to subract with the current reading and get the base consumption.  
 
 # Additional Notes:
 # All the variable declaration are right below the functions.
@@ -129,7 +128,7 @@ def calculate_bill():
         prev_record = 0
         curr_record = float(entry_usage.get())
         customer_type = ""
-        threshold = 2000
+        threshold = 1800
         residential_base_consumption = 0
         commercial_base_consumption = 0
         total_residential = 0
