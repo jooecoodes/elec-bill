@@ -26,6 +26,7 @@ import tkinter as tk
 import uuid
 import time
 from datetime import datetime
+from datetime import timedelta
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import base64
@@ -142,10 +143,23 @@ def calculate_bill():
         first_name = entry_first_name.get()
         last_name = entry_last_name.get()
         address = entry_address.get()
+        
+
+
+        # bill due dates logic
+        curr_date = datetime.now()
+        billing_start_date = None
+        billing_end_date = None
 
         if user_exist(first_name, last_name):    
             prev_record = float(get_last_record(first_name, last_name)['Current Reading'])
-            
+    
+        billing_start_date = curr_date
+        billing_end_date = billing_start_date + timedelta(days=30)
+
+        print("Billing start date: ", billing_start_date)
+        print("Billing end date: ", billing_end_date)
+
         if curr_record <= prev_record:
             messagebox.showerror("Error", "Current record should be higher and doesn't equal to the previous one")
             return
@@ -199,15 +213,19 @@ def calculate_bill():
         global bill_text
         bill_text = (
                 f"Electricity Bill\n\n"
+                f"Transaction Date: {str(billing_start_date)[0:10]}\n"
+                f"Billing Period Date: {str(billing_start_date)[0:10]} to {str(billing_end_date)[0:10]}\n\n"
                 f"Customer Details:\n"
                 f" Customer Name: {first_name} {last_name}\n"
                 f" Address: {address}\n"
                 f"Usage Details:\n"
-                f" Current Record (kWh):{curr_record} \n"
-                f" Previous Record (kWh):{prev_record} \n"
-                f" Base Consumption (kWh):{base_consumption} \n"
-                f" Residential Base Consumption (kWh):{residential_base_consumption} \n"
+                f" Residential Threshold (kWh): {threshold} \n"
+                f" Current Record (kWh): {curr_record} \n"
+                f" Previous Record (kWh): {prev_record} \n"
+                f" Base Consumption (kWh): {base_consumption} \n"
+                f" Residential Base Consumption (kWh): {residential_base_consumption} \n"
                 f" Commercial Base Consumption (kWh): {commercial_base_consumption} \n"
+                f"Bill Computation Summary:\n"
                 f"{'-'*60}\n"
                 f"{'':<34}{'Residential':<15}{'Commercial':<15}\n"
                 f"{'-'*60}\n"
@@ -220,8 +238,8 @@ def calculate_bill():
                 f"Universal Charges Rate (PHP/kWh):{'':<4}{residential_universal_charges_rate:<15.2f}{commercial_universal_charges_rate:<5.2f}\n"
                 f"Fit All Renewable Rate (PHP/kWh):{'':<4}{residential_fit_all_renewable_rate:<15.2f}{commercial_fit_all_renewable_rate:<5.2f}\n"
                 f"{'-'*60}\n"
-                f"Residential Bill (PHP) {total_residential:.2f}\n"
-                f"Commercial Bill (PHP) {total_commercial:.2f}\n"
+                f"Residential Bill: (PHP) {total_residential:.2f}\n"
+                f"Commercial Bill: (PHP) {total_commercial:.2f}\n"
                 f"Total Bill: (PHP) {total:.2f}\n"
                 f"{'-'*60}\n"
         )
@@ -352,7 +370,7 @@ frame_bill = tk.LabelFrame(root, text="Generated Bill", padx=10, pady=10)
 frame_bill.grid(row=3, column=0, columnspan=3, sticky="ew", padx=10, pady=10)  # spans 3 col.
 
 bill_text = ""
-label_bill = tk.Label(frame_bill, text="Electricity Bill\n\n[Fill out details to calculate]", justify="left", font=("Courier", 12), anchor="w")
+label_bill = tk.Label(frame_bill, text="Electricity Bill\n\n[Fill out details to calculate]", justify="left", font=("Courier", 10), anchor="w")
 label_bill.grid(row=0, column=0, sticky="w")
 
 
