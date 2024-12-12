@@ -30,7 +30,7 @@ If the base consumption goes over the threshold for a residential base consumpti
 If the first name and the last name matches some data stored during input, it will automatically retrieve the data such as their previous reading to subract with the current reading and get the base consumption. The address will also be edited if it the next input is a new one. 
 </p>
 
-![menu](https://github.com/jooecoodes/elec-bill/blob/master/assets/showcase.png?raw=true)
+![menu](https://github.com/jooecoodes/elec-bill/blob/master/assets/show.png?raw=true)
 
 ### Improvements
 There's so much room for improvements in this program including the code itself and make it more efficient and concise. It's not that bad but it's definitely not that well-written resourcefully.
