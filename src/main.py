@@ -156,9 +156,10 @@ def calculate_bill():
 
         if user_exist(first_name, last_name):    
             prev_record = float(get_last_record(first_name, last_name)['Current Reading'])
-    
-        billing_start_date = curr_date
-        billing_end_date = billing_start_date + timedelta(days=30)
+
+        billing_start_date = datetime(curr_date.year, curr_date.month, 1)
+        billing_trans_date = curr_date
+        billing_end_date = add_one_month(billing_start_date)
 
         print("Billing start date: ", billing_start_date)
         print("Billing end date: ", billing_end_date)
@@ -251,6 +252,28 @@ def calculate_bill():
         )
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numbers for usage and rate.")
+
+# this one is tricky, cause i dont want to use dateutil module for calculating the next month. 
+# i dont want to hustle the next person to be running this to install a dependency.
+# so what i did is i calculated it manually, leap years and common years stuff like that.
+def add_one_month(date):
+    
+    month = date.month + 1
+    year = date.year
+    if month > 12:  
+        month = 1
+        year += 1
+    
+    if month == 12: 
+        next_month_start = datetime(year + 1, 1, 1)  
+    else:
+        next_month_start = datetime(year, month + 1, 1)  
+
+    last_day_of_month = next_month_start - timedelta(days=1)
+
+    day = min(date.day, last_day_of_month.day)
+    
+    return datetime(year, month, day)
 
 def user_exist(first_name, last_name):
     if(first_name and last_name):
