@@ -21,7 +21,13 @@ You can run the run.bat file to run the program immediately through the terminal
 <p>
   This program takes the total bill by taking the current records of your electricity bill
 and subtracting it to the previous record to get the base consumption (if you have already set the record otherwise it is set 
-to 0 by default) and then calculates the total bill to be payed by multiplying the base consumption with the predetermined rates (generation, transmission, system loss, etc.). If the base consumption goes over the threshold for a residential base consumption (e.g. in this case 1800), the exceeded amount will be taken and calculated with the commercial rate and then added to the residential base consumption calculated with the residential rate to get total amount of the bill. The program stores all data inside 2 .csv files, one is for the general information of the user (e.g. their address, previous and current reading), and the other one is for their records which will be named after their IDs (e.g. date and time of the previous records). If the first name and the last name matches some data stored during input, it will automatically retrieve the data such as their previous reading to subract with the current reading and get the base consumption. The address will also be edited if it the next input is a new one. 
+to 0 by default) and then calculates the total bill to be payed by multiplying the base consumption with the predetermined rates (generation, transmission, system loss, etc.). 
+</p>
+<p>
+If the base consumption goes over the threshold for a residential base consumption (e.g. in this case 1800), the exceeded amount will be taken and calculated with the commercial rate and then added to the residential base consumption calculated with the residential rate to get total amount of the bill. The program stores all data inside 2 .csv files, one is for the general information of the user (e.g. their address, previous and current reading), and the other one is for their records which will be named after their IDs (e.g. date and time of the previous records).
+</p>
+<p>
+If the first name and the last name matches some data stored during input, it will automatically retrieve the data such as their previous reading to subract with the current reading and get the base consumption. The address will also be edited if it the next input is a new one. 
 </p>
 
 ![menu](https://github.com/jooecoodes/elec-bill/blob/master/assets/showcase.png?raw=true)
