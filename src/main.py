@@ -73,7 +73,6 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
             writer = csv.writer(file)
             writer.writerows(rows)
 
-        print("Data saved to data.csv")
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if not user_id:
@@ -99,7 +98,6 @@ def save_user_info(first_name, last_name, address, curr_read, prev_read = 0):
                     writer.writerow(['Current Reading', 'Timestamp'])
                 writer.writerow([curr_read_float, current_time])
 
-            print(f"Data saved to {file_name}")
         except Exception as e:
             messagebox.showerror("Error", f"Error while creating records")
     except Exception as e:
@@ -161,8 +159,6 @@ def calculate_bill():
         billing_trans_date = curr_date
         billing_end_date = add_one_month(billing_start_date)
 
-        print("Billing start date: ", billing_start_date)
-        print("Billing end date: ", billing_end_date)
 
         if curr_record <= prev_record:
             messagebox.showerror("Error", "Current record should be higher and doesn't equal to the previous one")
@@ -173,7 +169,6 @@ def calculate_bill():
 
         # takes the residential and commercial 
         if base_consumption > threshold:
-            print("executed comm")
             commercial_base_consumption = base_consumption - threshold
             residential_base_consumption = threshold
      
@@ -187,7 +182,6 @@ def calculate_bill():
             
             total = total_commercial + total_residential
         else:
-            print("executed res")
             residential_base_consumption = base_consumption
             # calculate base consumption to residential rates
             for i in range(len(residential_rate_list)):
@@ -195,20 +189,12 @@ def calculate_bill():
             
             total = total_residential
         
-        print("Prev Record: ", prev_record)
-        print("Curr Record: ", curr_record)
-        print("Base Consumption: ", base_consumption)
-
-        print("Sum of total rates: ", total)
-
         # residential rate
         # residential_rate = total_residential / threshold
         # commercial_rate = total_commercial / (base_consumption - threshold)
 
-        print("Residential")
 
         save_user_info(first_name, last_name, address, curr_record)
-        print("Im executed")
 
         if not first_name or not last_name or not address or not base_consumption:
             messagebox.showerror("Input Error", "Please fill in all customer or usage details.")
@@ -281,7 +267,6 @@ def user_exist(first_name, last_name):
             reader = csv.DictReader(file)
             for row in reader:
                 if row["First Name"] == first_name and row["Last Name"] == last_name:
-                    print(f"First Name: {row['First Name']} Last Name: {row['Last Name']} ID: {row['ID']}")
                     return True    
     return False
 
@@ -298,7 +283,6 @@ def get_last_record(first_name, last_name):
             reader = csv.DictReader(file)
             for row in reader:
                 if row["First Name"] == first_name and row["Last Name"] == last_name:
-                    print(f"First Name: {row['First Name']} Last Name: {row['Last Name']} ID: {row['ID']}")
                     target_file_name = row['ID']
     
         # loop through dir 
@@ -306,7 +290,6 @@ def get_last_record(first_name, last_name):
             target_file_name += ".csv"
             if target_file_name in files:
                 file_path = os.path.join(root, target_file_name)
-                print(f"File found: {file_path}")
                 
                 # read .csv find latest row
                 with open(file_path, mode="r") as file:
