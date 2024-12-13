@@ -135,6 +135,8 @@ def calculate_bill():
         commercial_base_consumption = 0
         total_residential = 0
         total_commercial = 0
+        residential_rate = 0
+        commercial_rate = 0
 
         # rate lists
         residential_rate_list = [round(residential_generation_rate, 2), round(residential_transmission_rate, 2), round(residential_system_loss_rate, 2), round(residential_distribution_rate, 2), round(residential_subsidies_rate, 2), round(residential_government_tax_rate, 2), round(residential_universal_charges_rate, 2), round(residential_fit_all_renewable_rate, 2)]
@@ -179,7 +181,9 @@ def calculate_bill():
             # calculate base consumption to commercial rates
             for i in range(len(commercial_rate_list)):
                 total_commercial += base_consumption * commercial_rate_list[i]
-            
+
+            residential_rate = total_residential / residential_base_consumption
+            commercial_rate = total_commercial / commercial_base_consumption
             total = total_commercial + total_residential
         else:
             residential_base_consumption = base_consumption
@@ -187,12 +191,8 @@ def calculate_bill():
             for i in range(len(residential_rate_list)):
                 total_residential += residential_base_consumption * residential_rate_list[i]
             
+            residential_rate = total_residential / residential_base_consumption
             total = total_residential
-        
-        # residential rate
-        # residential_rate = total_residential / threshold
-        # commercial_rate = total_commercial / (base_consumption - threshold)
-
 
         save_user_info(first_name, last_name, address, curr_record)
 
@@ -228,10 +228,12 @@ def calculate_bill():
                 f"Universal Charges Rate (PHP/kWh):{'':<4}{residential_universal_charges_rate:<15.2f}{commercial_universal_charges_rate:<5.2f}\n"
                 f"Fit All Renewable Rate (PHP/kWh):{'':<4}{residential_fit_all_renewable_rate:<15.2f}{commercial_fit_all_renewable_rate:<5.2f}\n"
                 f"{'-'*60}\n"
+                f"Residential Blended Rate: (PHP/kWh) {residential_rate:.5f}\n"
+                f"Commercial Blended Rate: (PHP/kWh) {commercial_rate:.5f}\n"
                 f"Residential Bill: (PHP) {total_residential:.2f}\n"
                 f"Commercial Bill: (PHP) {total_commercial:.2f}\n"
                 f"Total Bill: (PHP) {total:.2f}\n"
-                f"{'-'*60}\n"
+                f"{'-'*60}"
         )
         label_bill.config(
             text=bill_text,
