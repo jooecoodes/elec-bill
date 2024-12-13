@@ -1,6 +1,6 @@
 # Group 2 
 # Members-------------------------------------------------------        
-# Villacorta                |  Computer Programming 1.
+# Villacorta - Leader       |  Computer Programming 1.
 # Ello                      |  
 # Bologa                    |  Final PIT for 1st semester.
 # Recopelacion              |  Instructor: Kim Serenuela Pagal
