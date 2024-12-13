@@ -381,7 +381,7 @@ frame_bill = tk.LabelFrame(root, text="Generated Bill", padx=10, pady=10)
 frame_bill.grid(row=3, column=0, columnspan=3, sticky="ew", padx=10, pady=10)  # spans 3 col.
 
 bill_text = ""
-label_bill = tk.Label(frame_bill, text="Electricity Bill\n\n[Fill out details to calculate]", justify="left", font=("Courier", 10), anchor="w")
+label_bill = tk.Label(frame_bill, text="Electricity Bill\n\n[Fill out details to calculate]", justify="left", font=("Courier", 9), anchor="w")
 label_bill.grid(row=0, column=0, sticky="w")
 
 
